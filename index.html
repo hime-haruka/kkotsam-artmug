@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>꽃샘님 아트머그</title>
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero" aria-label="히어로">
+        <div class="wrap">
+            <div class="heroGrid">
+            <!-- LEFT: Author + Event -->
+            <div class="leftCard">
+                <div class="authorTop">
+                    <div class="chips">
+                        <span class="chip">Live2D Rigger</span>
+                        <span class="chip chip--soft">예약 문의 환영</span>
+                    </div>
+
+                    <h1 class="title">
+                        꽃샘 <span class="sub">Kkotsam</span>
+                    </h1>
+
+                    <p class="desc">
+                        안녕하세요. Live2D 리거 꽃샘 Kkotsam 입니다.<br />
+                        신청자분의 소중한 캐릭터를 어느 각도에서나 예쁘고 자연스럽게 움직이게 하기 위해 최선을 다해 작업하고 있습니다!
+                    </p>
+
+                    <!-- Only this line is editable from sheet -->
+                    <div class="notice" id="authorNotice">
+                        <div class="notice__icon">✦</div>
+                        <div class="notice__text">불러오는 중…</div>
+                    </div>
+
+                    <div class="ctaRow">
+                        <a class="btn btn--primary" href="#apply">예약 문의하기</a>
+                        <a class="btn" href="#portfolio">포트폴리오 보기</a>
+                    </div>
+                </div>
+
+                    <!-- Event list under author -->
+                    <div class="sectionLine"></div>
+
+                    <div class="sectionHead">
+                    <div class="sectionTitle">진행 중 이벤트</div>
+                    </div>
+
+                    <div class="eventList" id="eventList" aria-live="polite">
+                    <div class="skeleton">
+                        <div class="skLine"></div>
+                        <div class="skLine skLine--short"></div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- RIGHT: Slots -->
+                <div class="rightCard">
+                    <div class="slotHead">
+                        <div>
+                            <div class="sectionTitle">작업 슬롯</div>
+                            <div class="mini">○ 빈 슬롯 / ● 마감 슬롯 / ♥ 협업 슬롯</div>
+                            <div class="mini">마감되었어도 문의 주세요! 일정 조율하여 작업 가능합니다.</div>
+                        </div>
+                    </div>
+
+                    <div class="slotGrid" id="slotGrid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COLLAB SECTION -->
+    <section class="collab" id="collab" aria-label="협업 작가">
+        <div class="wrap">
+            <!-- Toggle Header -->
+            <button
+            class="collabHeader"
+            id="collabToggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="collabPanel"
+            >
+            <div class="collabHeader__left">
+                <div class="collabHeader__title">협업 작가</div>
+                <div class="collabHeader__desc">할인/이벤트 진행 중인 협업 작가님을 확인해보세요.</div>
+            </div>
+
+            <div class="collabHeader__right">
+                <span class="collabHeader__count" id="collabCount">불러오는 중…</span>
+                <span class="collabHeader__hint">클릭해서 열기</span>
+                <span class="collabHeader__icon" aria-hidden="true">▾</span>
+            </div>
+            </button>
+
+            <!-- Collapsible Panel -->
+            <div class="collabPanel" id="collabPanel">
+                <div class="collabPanel__inner">
+                    <div class="collabState" id="collabState"></div>
+                    <!-- List -->
+                    <div class="collabList" id="collabList" aria-label="협업 작가 목록"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOTICE SECTION -->
+    <section class="notices" id="notices" aria-label="안내 / 공지사항">
+        <div class="wrap">
+            <div class="noticesCard">
+                <div class="noticesHead">
+                    <div class="collabHeader__title">안내 사항</div>
+                    <div class="collabHeader__desc">안내사항을 읽지 않아 생기는 불이익에는 책임지지 않습니다. 꼭! 읽어주세요!</div>
+                </div>
+                <div class="noticesBody" id="noticesBody" aria-live="polite">
+                    <div class="skeleton" aria-hidden="true">
+                        <div class="skLine"></div>
+                        <div class="skLine skLine--short"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETAIL SECTION -->
+    <section class="rigDetail">
+        <div class="wrap">
+            <div class="rigDetailCard">
+
+            <div class="rigDetailHead">
+                <div class="sectionTitle">리깅 디테일</div>
+                <div class="mini">항목별 리깅 표현 예시 이미지입니다.</div>
+            </div>
+
+            <div id="rigDetailBody" class="rigDetailBody"></div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS SECTION -->
+    <section class="process">
+        <div class="wrap">
+            <div class="processCard">
+
+            <div class="processHead">
+                <div class="sectionTitle">작업 프로세스</div>
+            </div>
+
+            <div class="procZigzag">
+
+                <!-- 01 문의 -->
+                <div class="procRow">
+                <div class="procBox left">
+                    <div class="procTitle">문의</div>
+                    <div class="procDesc">일정 / 범위 확인</div>
+                </div>
+
+                <div class="procMid">
+                    <div class="procBadge">01</div>
+                </div>
+
+                <div class="procBox right is-empty"></div>
+                </div>
+
+                <!-- 02 입금 -->
+                <div class="procRow">
+                <div class="procBox left is-empty"></div>
+
+                <div class="procMid">
+                    <div class="procBadge">02</div>
+                </div>
+
+                <div class="procBox right">
+                    <div class="procTitle">입금</div>
+                    <div class="procDesc">결제 완료 후 진행</div>
+                </div>
+                </div>
+
+                <!-- 03 PSD 확인 -->
+                <div class="procRow">
+                <div class="procBox left">
+                    <div class="procTitle">PSD 확인 & 레이어 정리</div>
+                    <div class="procDesc">레이어 / 메쉬 점검</div>
+                </div>
+
+                <div class="procMid">
+                    <div class="procBadge">03</div>
+                </div>
+
+                <div class="procBox right is-empty"></div>
+                </div>
+
+                <!-- 04 리깅 얼굴 -->
+                <div class="procRow">
+                <div class="procBox left is-empty"></div>
+
+                <div class="procMid">
+                    <div class="procBadge">04</div>
+                </div>
+
+                <div class="procBox right is-key">
+                    <div class="procTitle">리깅 [얼굴]</div>
+                    <div class="procDesc">표정 / 눈 / 입 디테일</div>
+                </div>
+                </div>
+
+                <!-- 05 1차 피드백 -->
+                <div class="procRow">
+                <div class="procBox left is-feedback">
+                    <div class="procTitle">1차 피드백</div>
+                    <div class="procDesc">수정 사항 반영</div>
+                </div>
+
+                <div class="procMid">
+                    <div class="procBadge">05</div>
+                </div>
+
+                <div class="procBox right is-empty"></div>
+                </div>
+
+                <!-- 06 리깅 몸 -->
+                <div class="procRow">
+                <div class="procBox left is-empty"></div>
+
+                <div class="procMid">
+                    <div class="procBadge">06</div>
+                </div>
+
+                <div class="procBox right is-key">
+                    <div class="procTitle">리깅 [몸]</div>
+                    <div class="procDesc">물리 / 움직임 / 밸런스</div>
+                </div>
+                </div>
+
+                <!-- 07 2차 피드백 -->
+                <div class="procRow">
+                <div class="procBox left is-feedback">
+                    <div class="procTitle">2차 피드백</div>
+                    <div class="procDesc">최종 다듬기</div>
+                </div>
+
+                <div class="procMid">
+                    <div class="procBadge">07</div>
+                </div>
+
+                <div class="procBox right is-empty"></div>
+                </div>
+
+                <!-- 08 완성 -->
+                <div class="procRow">
+                <div class="procBox left is-empty"></div>
+
+                <div class="procMid">
+                    <div class="procBadge is-done">08</div>
+                </div>
+
+                <div class="procBox right is-key">
+                    <div class="procTitle">완성</div>
+                    <div class="procDesc">납품 및 세팅 안내</div>
+                </div>
+                </div>
+
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RIG OPTIONS SECTION -->
+    <section class="rigOptions" id="rigOptions" aria-label="리깅 옵션">
+        <div class="wrap">
+            <div class="rigOptionsCard">
+
+                <div class="rigOptionsHead">
+                    <div class="sectionTitle">리깅 옵션</div>
+                    <div class="mini">이외 추가 옵션의 경우 문의 부탁드립니다.</div>
+                </div>
+
+                <div id="rigOptionsBody" class="rigOptionsBody" aria-live="polite">
+                    <div class="skeleton" aria-hidden="true">
+                        <div class="skLine"></div>
+                        <div class="skLine skLine--short"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTFOLIO SECTION -->
+    <section class="portfolio" id="portfolio" aria-label="포트폴리오">
+        <div class="wrap">
+            <div class="portfolioCard">
+                <div class="rigOptionsHead">
+                    <div class="sectionTitle">포트폴리오</div>
+                </div>
+                <div class="portfolioSlider">
+                    <button class="portfolioNav portfolioNav--prev" aria-label="이전">‹</button>
+                    <button class="portfolioNav portfolioNav--next" aria-label="다음">›</button>
+                    <div class="portfolioTrack" id="portfolioTrack"></div>
+                </div>
+                <div class="portfolioDots" id="portfolioDots"></div>
+                <div class="portfolioText">
+                    <div class="portfolioTitle" id="portfolioTitle"></div>
+                    <div class="portfolioDesc" id="portfolioDesc"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APPLY + CALC SECTION -->
+    <section class="apply" id="apply" aria-label="리깅 신청 양식">
+    <div class="wrap">
+        <div class="applyCard">
+        <div class="applyHead">
+            <div class="sectionTitle">리깅 신청 양식</div>
+            <div class="mini">옵션/금액은 변동될 수 있으며, 아래 예상 견적은 참고용입니다.</div>
+        </div>
+
+        <form class="applyForm" id="applyForm" autocomplete="off">
+            <!-- 1. 방송 플랫폼 -->
+            <div class="fRow">
+            <label class="fLabel" for="f_platform">1. 방송 플랫폼</label>
+            <input class="fInput" id="f_nickname" name="nickname" type="text" placeholder="방송하시는 플랫폼을 입력해주세요." />
+            </div>
+
+            <!-- 2. 방송 활동 닉네임 -->
+            <div class="fRow">
+            <label class="fLabel" for="f_nickname">2. 방송 활동 닉네임</label>
+            <input class="fInput" id="f_nickname" name="nickname" type="text" placeholder="닉네임을 입력해주세요." />
+            </div>
+
+            <!-- 3. 리깅 옵션 (단일) -->
+            <div class="fRow">
+            <label class="fLabel" for="f_base_rig">3. 리깅 옵션</label>
+            <select class="fInput" id="f_base_rig" name="base_rig" data-group="base_rig">
+                <option value="" selected>불러오는 중…</option>
+            </select>
+            </div>
+
+            <!-- 4. 추가 옵션 -->
+            <div class="fGroup">
+            <div class="fGroupTitle">4. 추가 옵션</div>
+
+            <!-- 수량형 -->
+            <div class="unitGrid">
+                <div class="fRow fRow--inline">
+                    <div class="fInlineLeft">
+                    <div class="fLabel">의상 추가 (개당)</div>
+                    <div class="mini" id="hint_add_costume"></div>
+                    </div>
+                    <select class="fInput fInput--small" id="f_add_costume_qty" name="add_costume_qty" data-unit-group="add_costume"></select>
+                </div>
+                <div class="fRow fRow--inline">
+                    <div class="fInlineLeft">
+                    <div class="fLabel">헤어 추가 (개당)</div>
+                    <div class="mini" id="hint_add_hair"></div>
+                    </div>
+                    <select class="fInput fInput--small" id="f_add_hair_qty" name="add_hair_qty" data-unit-group="add_hair"></select>
+                </div>
+                <div class="fRow fRow--inline">
+                    <div class="fInlineLeft">
+                    <div class="fLabel">포즈 추가 (개당)</div>
+                    <div class="mini" id="hint_add_pose"></div>
+                    </div>
+                    <select class="fInput fInput--small" id="f_add_pose_qty" name="add_pose_qty" data-unit-group="add_pose"></select>
+                </div>
+            </div>
+
+            <!-- 다중선택: 표정 애니 -->
+            <div class="fRow">
+                <div class="fLabel">표정 애니메이션 추가 (다중선택)</div>
+                <div class="checkGrid" id="f_face_anim" data-multi-group="face_anim"></div>
+            </div>
+
+            <!-- 다중선택: 그 외 추가 -->
+            <div class="fRow">
+                <div class="fLabel">그 외 추가 (다중선택)</div>
+                <div class="checkGrid" id="f_other_add" data-multi-group="other_add"></div>
+            </div>
+            </div>
+
+            <!-- 5. 표정 종류 -->
+            <div class="fRow">
+            <label class="fLabel" for="f_face_list">5. 표정 종류 (신청하려는 표정 전부 기재)</label>
+            <textarea class="fInput fInput--area" id="f_face_list" name="face_list" rows="3" placeholder="예: 기본/웃음/슬픔/화남/놀람 …"></textarea>
+            </div>
+
+            <!-- 6. 협업 작가 -->
+            <div class="fRow">
+            <div class="fLabel">6. 협업 작가</div>
+            <div class="radioRow" id="f_collab_discount" data-group="collab_discount"></div>
+            <div class="fHint mini">YES 선택시 일러스트레이터 정보에 협업 작가님을 적어주세요.</div>
+            </div>
+
+            <!-- 7. 일러스트레이터 정보 -->
+            <div class="fRow">
+            <label class="fLabel" for="f_illustrator">7. 일러스트레이터 정보</label>
+            <textarea class="fInput fInput--area" id="f_illustrator" name="illustrator" rows="2" placeholder="닉네임 / 링크 등"></textarea>
+            </div>
+
+            <!-- 8. 포트폴리오 비공개 -->
+            <div class="fRow">
+            <label class="fLabel" for="f_privacy">8. 포트폴리오 비공개</label>
+            <select class="fInput" id="f_privacy" name="privacy" data-group="privacy"></select>
+            <div class="fHint mini">공개 선택 시 작업 과정이 X에 업로드 될 수 있습니다.</div>
+            <div class="fHint mini">영구 비공개 선택 시 전체 금액의 50% 추가</div>
+            </div>
+
+            <!-- 9. 추가 설명 -->
+            <div class="fRow">
+            <label class="fLabel" for="f_memo">9. 추가 설명</label>
+            <textarea class="fInput fInput--area" id="f_memo" name="memo" rows="4" placeholder="자유롭게 작성해주세요"></textarea>
+            </div>
+
+            <!-- 10. 예상 견적 -->
+            <div class="fRow" id="f_quote_card" aria-live="polite">
+            <div class="fLabel f_calc">10. 예상 견적<div class="quoteTotal" id="calc_total">-</div></div>
+
+            <div class="quoteLine" id="calc_line">-</div>
+                <div class="mini quoteNote">* 예상 견적은 참고용이며, 최종 견적은 상담 후 확정됩니다.</div>
+            </div>
+        </form>
+
+            <div class="applyActions">
+                <button type="button" class="btn" id="btnCopyForm">
+                    양식 복사
+                </button>
+                <button type="button" class="btn" id="btnResetForm">
+                    초기화
+                </button>
+            </div>
+        </div>
+    </div>
+    </section>
+
+
+
+<script defer src="./app.js"></script>
+</body>
+</html>
