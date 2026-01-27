@@ -1,7 +1,7 @@
 /* hero.js */
 
 const EVENT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=0&single=true&output=csv";
-const NOTICE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=1522867519&single=true&output=csv";
+const HERO_EVENT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=0&single=true&output=csv";
 const SLOT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=728306151&single=true&output=csv";
 const NOTICES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=729967944&single=true&output=csv";
 const RIG_OPTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=177450489&single=true&output=csv";
@@ -121,9 +121,42 @@ function rowsToObjects(rows) {
 async function fetchCSV(url) {
   const res = await fetch(url, { cache: "no-store" });
   const text = await res.text();
-  if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}\n${text.slice(0, 200)}`);
+
+  // Google Sheet pub CSV가 아닌 경우(HTML/리다이렉트/오류 페이지) 디버깅을 쉽게
+  const head = (text || "").slice(0, 300);
+  const looksLikeHTML = /<!doctype html|<html\b/i.test(head);
+
+  if (!res.ok) {
+    if (looksLikeHTML) {
+      throw new Error(
+        [
+          `HTTP ${res.status} ${res.statusText}`,
+          "CSV가 아니라 HTML이 내려왔습니다.",
+          "→ 시트가 '웹에 게시' 되어있는지(Publish to the web), 그리고 링크가 .../pub? ... &output=csv 형태인지 확인해주세요.",
+          "→ (tip) 주소 끝에 &single=true&output=csv 가 반드시 있어야 합니다.",
+          "",
+          head.replace(/\s+/g, " ").trim()
+        ].join("\n")
+      );
+    }
+    throw new Error(`HTTP ${res.status} ${res.statusText}\n${head}`);
+  }
+
+  if (looksLikeHTML) {
+    // 상태코드가 200이어도 HTML이 오는 케이스가 있어 방어
+    throw new Error(
+      [
+        "CSV가 아니라 HTML이 내려왔습니다.",
+        "→ '웹에 게시' 링크(pub) + output=csv 링크인지 확인해주세요.",
+        "",
+        head.replace(/\s+/g, " ").trim()
+      ].join("\n")
+    );
+  }
+
   return text;
 }
+
 
 function hasPlaceholder(url) {
   return !url || url.startsWith("PASTE_");
@@ -134,45 +167,114 @@ function isVisibleFlag(v) {
 }
 
 // ---------- 공지 ----------
-function renderNotice(text, { isError = false } = {}) {
+function renderNoticeCard(items, { isError = false } = {}) {
   if (!$notice) return;
 
-  const safe = escapeHTML(text);
+  if (isError) {
+    const safe = escapeHTML(String(items || ""));
+    $notice.innerHTML = `
+      <div class="sectionTitle">진행 중 이벤트</div>
+      <div class="heroEventList">
+        <div class="heroEventRow">
+          <div class="heroEventIcon">✦</div>
+          <div class="heroEventBody">
+            <div class="heroEventHead">
+              <div class="notice__title"><strong>공지 로드 실패</strong></div>
+            </div>
+            <div class="notice__desc">${safe}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const list = Array.isArray(items) ? items : [];
+  const listHTML =
+    list.length > 0
+      ? list
+          .map((it, idx) => {
+            const title = escapeHTML(normalizeValue(it?.title) || "");
+            const desc = escapeHTML(normalizeValue(it?.desc) || "");
+            const badge = escapeHTML(normalizeValue(it?.badge) || "");
+
+            return `
+              <div class="heroEventRow">
+                <div class="heroEventIcon">✦</div>
+                <div class="heroEventBody">
+                  <div class="heroEventHead">
+                    ${title ? `<div class="notice__title"><strong>${title}</strong></div>` : `<div></div>`}
+                    ${badge ? `<div class="notice__badge"><span class="badge">${badge}</span></div>` : ``}
+                  </div>
+                  ${desc ? `<div class="notice__desc">${desc}</div>` : ""}
+                  ${idx !== list.length - 1 ? `<div class="heroEventDivider"></div>` : ``}
+                </div>
+              </div>
+            `;
+          })
+          .join("")
+      : `
+        <div class="heroEventRow">
+          <div class="heroEventIcon">✦</div>
+          <div class="heroEventBody">
+            <div class="notice__desc">현재 진행 중인 이벤트가 없습니다.</div>
+          </div>
+        </div>
+      `;
+
   $notice.innerHTML = `
-    <div class="notice__icon">✦</div>
-    <div class="notice__text">${isError ? `<strong>공지 로드 실패</strong><br/>${safe}` : safe}</div>
+    <div class="sectionTitle">진행 중 이벤트</div>
+    <div class="heroEventList">
+      ${listHTML}
+    </div>
   `;
 }
+
+
 
 async function loadNotice() {
   if (!$notice) return;
 
-  if (hasPlaceholder(NOTICE_CSV_URL)) {
-    renderNotice("NOTICE_CSV_URL이 설정되지 않았습니다. (공지 시트의 pub CSV 링크를 넣어주세요)");
+  if (hasPlaceholder(HERO_EVENT_CSV_URL)) {
+    renderNoticeCard(
+      "HERO_EVENT_CSV_URL이 설정되지 않았습니다. (hero_event 시트의 pub CSV 링크를 넣어주세요)",
+      { isError: true }
+    );
     return;
   }
 
   try {
-    const csv = await fetchCSV(NOTICE_CSV_URL);
+    const csv = await fetchCSV(HERO_EVENT_CSV_URL);
     const rows = parseCSV(csv);
-    const headerKeys = rows[0]?.map(normalizeKey) ?? [];
-
-    const required = ["공지사항", "노출 여부"];
-    const missing = required.filter(k => !headerKeys.includes(k));
-    if (missing.length) {
-      renderNotice(`공지 시트 헤더를 인식하지 못했습니다: ${missing.join(", ")}`, { isError: true });
-      return;
-    }
+    if (!rows.length) throw new Error("Empty CSV");
 
     const objects = rowsToObjects(rows);
-    const visible = objects.find(o => isVisibleFlag(o["노출 여부"]));
-    const msg = visible?.["공지사항"] || "현재 공지사항이 없습니다.";
-    renderNotice(msg);
+
+    const isHeroVisible = (v) => {
+      const s = normalizeValue(v).toUpperCase();
+      return ["O", "Y", "YES", "TRUE", "1", "ON", "공개"].includes(s);
+    };
+
+    const VIS_KEYS = ["노출 여부", "표시 여부", "노출", "공개 여부"];
+
+    // ✅ 여기서 “여러 개”를 뽑음
+    const visibleItems = objects
+      .filter(o => VIS_KEYS.some(k => isHeroVisible(o?.[k])))
+      // 필요하면 정렬 기준 추가(예: 순서/시작일)
+      // .sort((a,b)=> Number(a["순서"]||999)-Number(b["순서"]||999))
+      .map(o => ({
+        title: o["이벤트 제목"] || o["제목"] || "",
+        desc:  o["이벤트 설명"] || o["설명"] || o["내용"] || "",
+        badge: o["배지"] || "",
+      }));
+
+    renderNoticeCard(visibleItems);
   } catch (err) {
+    renderNoticeCard(err?.message || String(err), { isError: true });
     console.error(err);
-    renderNotice(err.message, { isError: true });
   }
 }
+
 
 // ---------- 이벤트 ----------
 function renderEvents(items) {
@@ -303,7 +405,7 @@ function renderSlots(grouped) {
     const cells = [1, 2, 3].map(no => {
       const row = byNo.get(String(no));
       const info = normalizeSlotType(row?.["슬롯 타입"]);
-      return `<div class="slot ${info.cls}">${info.symbol} ${escapeHTML(info.label)}</div>`;
+      return `<div class="slot ${info.cls}">${info.symbol} ${escapeHTML(row?.["슬롯 타입"] || "")}</div>`;
     }).join("");
 
     return `
@@ -1214,6 +1316,9 @@ loadPortfolio();
 const RIG_FORM_CHOICES_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF0Fwu2o_2tG9oJByJxNcbHt67qoLSQ3qp79kGToTnX9X0kmCYKIuTlIPDRM2fNpzkuOKkgxeQtgzD/pub?gid=1012615422&single=true&output=csv";
 
+// 협업 작가 YES 시 적용되는 고정 할인
+const COLLAB_DISCOUNT = -100000;
+
 (function initRigApplyForm() {
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -1562,20 +1667,47 @@ const RIG_FORM_CHOICES_CSV_URL =
   }
 
   function getCollab() {
-    if (!$collabWrap) return { label: "", price: 0 };
+  if (!$collabWrap) return { label: "", price: 0 };
 
-    const checked =
-      $('input[type="radio"][name="collab_discount"]:checked', $collabWrap) ||
-      $('input[type="radio"]:checked', $collabWrap);
+  const checked =
+    $('input[type="radio"][name="collab_discount"]:checked', $collabWrap) ||
+    $('input[type="radio"]:checked', $collabWrap);
 
-    if (!checked) return { label: "", price: 0 };
+  if (!checked) return { label: "", price: 0 };
 
-    const price = toNumber(checked.dataset.price, 0);
-    const v = normalizeValue(checked.value).toUpperCase();
-    // Label policy: keep neat
-    if (v === "YES") return { label: "협업 할인", price };
-    return { label: "협업(해당 없음)", price: 0 };
+  const vRaw = normalizeValue(checked.value);
+  const vn = vRaw.toUpperCase();
+
+  const labelText = normalizeValue(checked.closest("label")?.innerText || "");
+  const ln = labelText.toUpperCase();
+
+  // 1) 명시적으로 NO / 해당없음이면 무조건 할인 미적용
+  const falsy =
+    ["NO", "N", "X", "FALSE", "0", "아니오", "아니요", "아님"].includes(vn) ||
+    ln.includes("NO") ||
+    (ln.includes("해당") && ln.includes("없"));
+
+  if (falsy) return { label: "협업(해당 없음)", price: 0 };
+
+  // 2) YES / 예 / 네 / 할인 등은 할인 적용
+  const truthy =
+    ["YES", "Y", "O", "TRUE", "1", "예", "네"].includes(vn) ||
+    ln.includes("YES") ||
+    ln.includes("할인") ||
+    ln.includes("예") ||
+    ln.includes("네") ||
+    ln.includes("O");
+
+  if (truthy) {
+    const priceRaw = toNumber(checked.dataset.price, 0);
+    // 시트에 가격이 비어있거나 0이어도, 할인 선택이면 -10만원 고정 적용
+    const price = priceRaw !== 0 ? priceRaw : COLLAB_DISCOUNT;
+    return { label: "협업 할인", price };
   }
+
+  return { label: "협업(해당 없음)", price: 0 };
+}
+
 
   function getUnits() {
     if (!$unitWrap) return [];
@@ -1870,4 +2002,40 @@ const RIG_FORM_CHOICES_CSV_URL =
 
   if ($btnCopy) $btnCopy.addEventListener("click", copyForm);
   if ($btnReset) $btnReset.addEventListener("click", resetForm);
+})();
+
+(function initGotoScroll(){
+  function bind() {
+    document
+      .querySelectorAll('a[href^="#"]')
+      .forEach(a => {
+        if (a.__gotoBound) return;
+        a.__gotoBound = true;
+
+        a.addEventListener("click", e => {
+          const href = a.getAttribute("href");
+          if (!href || href === "#") return;
+
+          const id = href.replace("#", "");
+          const target = document.getElementById(id);
+          if (!target) return;
+
+          e.preventDefault();
+
+          const y =
+            target.getBoundingClientRect().top +
+            window.scrollY -
+            0;
+
+          window.scrollTo({
+            top: y,
+            behavior: "smooth"
+          });
+        });
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", bind);
+  window.addEventListener("load", bind);
+  setTimeout(bind, 600);
 })();

@@ -31,6 +31,7 @@
 
                     <!-- Only this line is editable from sheet -->
                     <div class="notice" id="authorNotice">
+                        <div class="sectionTitle">진행 중 이벤트</div>
                         <div class="notice__icon">✦</div>
                         <div class="notice__text">불러오는 중…</div>
                     </div>
@@ -41,20 +42,7 @@
                     </div>
                 </div>
 
-                    <!-- Event list under author -->
-                    <div class="sectionLine"></div>
-
-                    <div class="sectionHead">
-                    <div class="sectionTitle">진행 중 이벤트</div>
-                    </div>
-
-                    <div class="eventList" id="eventList" aria-live="polite">
-                    <div class="skeleton">
-                        <div class="skLine"></div>
-                        <div class="skLine skLine--short"></div>
-                    </div>
                 </div>
-            </div>
 
                 <!-- RIGHT: Slots -->
                 <div class="rightCard">
@@ -323,7 +311,7 @@
             <!-- 1. 방송 플랫폼 -->
             <div class="fRow">
             <label class="fLabel" for="f_platform">1. 방송 플랫폼</label>
-            <input class="fInput" id="f_nickname" name="nickname" type="text" placeholder="방송하시는 플랫폼을 입력해주세요." />
+            <input class="fInput" id="f_platform" name="platform" type="text" placeholder="방송하시는 플랫폼을 입력해주세요." />
             </div>
 
             <!-- 2. 방송 활동 닉네임 -->
@@ -435,9 +423,7 @@
         </div>
     </div>
     </section>
-
-
-
+    
 <script defer src="./app.js"></script>
 </body>
 </html>

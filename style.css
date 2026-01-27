@@ -105,8 +105,11 @@ overflow:hidden;
 position:relative;
 }
 
-.leftCard{ padding: 26px; }
-.rightCard{ padding: 22px; }
+.leftCard{
+  padding: 26px;
+}
+
+.rightCard{ padding: 20px; }
 
 /* author */
 .chips{ display:flex; gap:10px; margin-bottom: 12px; }
@@ -156,7 +159,19 @@ border-radius: var(--r2);
 border: 1px solid rgba(79,167,255,.18);
 background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(79,167,255,.06));
 box-shadow: var(--shadow2);
+align-items: center;
+flex-wrap: wrap;
+position: relative;
 }
+
+.notice > .sectionTitle{
+  flex: 0 0 100%;
+  margin: 0 0 8px;
+}
+
+/* 아이콘/텍스트가 2번째 줄에서 자연스럽게 붙도록 */
+.notice__icon{ margin-top: 0; }
+.notice__text{ min-width: 0; }
 .notice__icon{
 width: 34px; height: 34px;
 border-radius: 12px;
@@ -176,6 +191,60 @@ font-size: 15px;
 color: rgba(143,123,255,.92);
 font-weight: 950;
 text-shadow: 0 0 18px rgba(143,123,255,.16);
+}
+
+/* =========================
+   HERO EVENT BADGE
+========================= */
+
+.notice__badge .badge{
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  font-size: 12.6px;
+  font-weight: 900;
+  letter-spacing: .2px;
+
+  color: rgba(90,70,190,.95);
+  background: rgba(143,123,255,.12);
+  border: 1px solid rgba(143,123,255,.24);
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.6) inset,
+    0 8px 20px rgba(143,123,255,.12);
+}
+
+.heroEventDivider{
+  height: 1px;
+  background: rgba(40,70,140,.10);
+  margin: 10px 0;
+}
+
+.heroEventIcon{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+
+  background: linear-gradient(
+    180deg,
+    rgba(144, 194, 255, 0.25),
+    rgba(154, 184, 255, 0.18)
+  );
+  border: 1px solid rgba(150, 182, 255, 0.35);
+
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 900;
+
+  box-shadow:
+    0 4px 12px rgba(90,140,255,.25),
+    inset 0 0 0 1px rgba(255,255,255,.6);
 }
 
 /* CTA */
@@ -1595,4 +1664,55 @@ font-size: 12.6px;
   gap:12px;
   margin-top:16px;
   justify-content:flex-end;
+}
+
+/* 여러 이벤트 표시 레이아웃 */
+.heroEventList{
+  width: 100%;
+}
+
+.heroEventRow{
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.heroEventIcon{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+/* 본문 */
+.heroEventBody{
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 제목(왼쪽) + 배지(오른쪽) */
+.heroEventHead{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* 배지 겹침 방지: 이전 absolute 규칙이 있으면 무조건 해제 */
+.notice__badge{
+  position: static !important;
+  margin-top: 0 !important;
+}
+
+.notice__badge .badge{
+  white-space: nowrap;
+}
+
+/* 항목 구분선 */
+.heroEventDivider{
+  height: 1px;
+  background: rgba(40,70,140,.10);
+  margin: 10px 0;
 }
