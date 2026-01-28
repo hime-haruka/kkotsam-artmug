@@ -2004,38 +2004,53 @@ const COLLAB_DISCOUNT = -100000;
   if ($btnReset) $btnReset.addEventListener("click", resetForm);
 })();
 
-(function initGotoScroll(){
-  function bind() {
-    document
-      .querySelectorAll('a[href^="#"]')
-      .forEach(a => {
-        if (a.__gotoBound) return;
-        a.__gotoBound = true;
+(function () {
+  function bindGoto() {
+    document.querySelectorAll('a[name="goto"]').forEach((a) => {
+      if (a.__gotoBound) return;
+      a.__gotoBound = true;
 
-        a.addEventListener("click", e => {
-          const href = a.getAttribute("href");
-          if (!href || href === "#") return;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
 
-          const id = href.replace("#", "");
-          const target = document.getElementById(id);
-          if (!target) return;
+        const href = a.getAttribute("href");
+        if (!href) return;
 
-          e.preventDefault();
+        // href="#apply" -> "apply"
+        const targetKey = href.replace(/^#/, "").trim();
+        if (!targetKey) return;
 
-          const y =
-            target.getBoundingClientRect().top +
-            window.scrollY -
-            0;
+        const target =
+          document.getElementById(targetKey) ||
+          document.querySelector(`[name="${targetKey}"]`);
 
-          window.scrollTo({
-            top: y,
-            behavior: "smooth"
-          });
+        if (!target) {
+          console.warn("[goto] target not found:", targetKey, "(href:", href, ")");
+          return;
+        }
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
         });
       });
+    });
   }
 
-  document.addEventListener("DOMContentLoaded", bind);
-  window.addEventListener("load", bind);
-  setTimeout(bind, 600);
+  document.addEventListener("DOMContentLoaded", bindGoto);
+  window.addEventListener("load", bindGoto);
+  setTimeout(bindGoto, 800);
 })();
+
+document.getElementById("resetForm")?.addEventListener("click", () => {
+  const form = document.querySelector(".applyForm");
+  if (!form) return;
+
+  form.reset();
+
+  form.querySelectorAll("input, textarea, select").forEach((el) => {
+    if (el.tagName === "SELECT") el.selectedIndex = 0;
+    else el.value = "";
+  });
+});
