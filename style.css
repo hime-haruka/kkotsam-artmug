@@ -87,7 +87,10 @@ body::-webkit-scrollbar{
 /* layout */
 .hero{ position:relative; padding: 58px 18px 18px; }
 
-.wrap{ max-width: var(--max); margin: 0 auto; }
+.wrap{ 
+  max-width: 1080px;
+  margin: 0 auto;
+}
 .heroGrid{
 display:grid;
 grid-template-columns: 1.06fr .94fr;
